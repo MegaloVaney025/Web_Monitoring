@@ -95,7 +95,7 @@ def graceful_shutdown(sig, frame):
     sys.exit(0)
 
 def main_loop():
-    logger.info("Monitor iniciado exitosamente", flush=True)
+    logger.info("Monitor iniciado exitosamente")
     normal_interval = config.NORMAL_CHECK_INTERVAL
     alert_interval = config.ALERT_CHECK_INTERVAL
     ssl_alert_days = config.SSL_ALERT_DAYS
@@ -131,7 +131,7 @@ def main_loop():
         for remaining in range(interval, 0, -1):
             mins, secs = divmod(remaining, 60)
             timeformat = f"{mins:02d}:{secs:02d}"
-            logger.info(f"\r⏳ Next check in {timeformat}", end='', flush=True)
+            logger.info(f"\r⏳ Next check in {timeformat}", end='')
             time.sleep(1)
 
         logger.info("\n")  # Salto de línea después de contador

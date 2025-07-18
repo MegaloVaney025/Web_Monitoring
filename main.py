@@ -131,7 +131,7 @@ def main_loop():
         for remaining in range(interval, 0, -1):
             mins, secs = divmod(remaining, 60)
             timeformat = f"{mins:02d}:{secs:02d}"
-            logger.info(f"\r⏳ Next check in {timeformat}", end='')
+            print(f"\r⏳ Next check in {timeformat}", end='', flush=True)
             time.sleep(1)
 
         logger.info("\n")  # Salto de línea después de contador

@@ -11,9 +11,11 @@ from screenshot_manager import enviar_y_borrar_screenshots
 import config
 from daily_summary import DailySummary
 from logger_module import logger
+from screenshot_module import take_screenshot
 
 # Estado global de alerta
 alert_mode = {}
+alert_screenshot_counter = {}
 
 # Inicializar resumen diario
 daily_summary = DailySummary()
@@ -61,7 +63,16 @@ def process_url(client, conf, url, ssl_alert_days):
         if is_down and not currently_alert:
             # Activar alerta
             set_alert_mode(client, url, True)
+            alert_screenshot_counter[(client, url)] = 0
             daily_summary.increment_alerts()
+
+            # Take screenshot for evidence
+            try:
+                screenshot_path = take_screenshot(client, conf["screenshot_dir"], url)
+                logger.info(f"📸 Screenshot taken: {screenshot_path}")
+            except Exception as e:
+                logger.error(f"[ERROR] Failed to take screenshot for {client} - {url}: {e}")
+
             msgs = get_alert_messages(status)
             send_teams_message(msgs["teams"], webhook)
             send_telegram_message(msgs["telegram"])
@@ -74,14 +85,28 @@ def process_url(client, conf, url, ssl_alert_days):
             recovery_msg = f"✅ RECUPERACIÓN: {url} está UP nuevamente."
             send_teams_message(recovery_msg, webhook)
             send_telegram_message(recovery_msg)
+            # Take final screenshot before sending
+            try:
+                screenshot_path = take_screenshot(client, conf["screenshot_dir"], url)
+                logger.info(f"📸 Final recovery screenshot taken: {screenshot_path}")
+            except Exception as e:
+                logger.error(f"[ERROR] Failed to take final recovery screenshot for {client} - {url}: {e}")
             enviar_y_borrar_screenshots(client, conf["screenshot_dir"], url)
+            alert_screenshot_counter.pop((client, url), None)
             logger.info(f"🟢 ALERTA FINALIZADA para {client} - {url}")
 
         elif is_down and currently_alert:
-            # Alerta continua (solo Telegram)
+            # Alerta continua
+            alert_screenshot_counter[(client, url)] = alert_screenshot_counter.get((client, url), 0) + 1
             msgs = get_alert_messages(status)
             send_telegram_message(msgs["telegram"])
             logger.info(f"🔴 ALERTA CONTINÚA para {client} - {url}")
+            if alert_screenshot_counter[(client, url)] % config.PERIODIC_SCREENSHOT_N == 0:
+                try:
+                    screenshot_path = take_screenshot(client, conf["screenshot_dir"], url)
+                    logger.info(f"📸 Periodic screenshot taken (every 10 checks): {screenshot_path}")
+                except Exception as e:
+                    logger.error(f"[ERROR] Failed to take periodic screenshot for {client} - {url}: {e}")
 
         else:
             # Estado normal

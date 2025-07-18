@@ -2,7 +2,7 @@ import requests
 import ssl
 import socket
 from datetime import datetime
-from config import SSL_ALERT_DAYS
+from config import SSL_ALERT_DAYS, ACCEPTABLE_STATUS_CODES
 
 def check_url_status(url: str, ssl_alert_days = SSL_ALERT_DAYS) -> dict:
     """
@@ -26,7 +26,7 @@ def check_url_status(url: str, ssl_alert_days = SSL_ALERT_DAYS) -> dict:
     try:
         response = requests.get(url, timeout=10)
         result["status_code"] = response.status_code
-        result["up"] = response.status_code == 200
+        result["up"] = response.status_code in ACCEPTABLE_STATUS_CODES
     except requests.Timeout:
         result["timeout"] = True
         result["error"] = "Timeout"

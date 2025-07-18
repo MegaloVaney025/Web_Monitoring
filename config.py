@@ -11,13 +11,13 @@ LOGS_BASE_DIR = os.path.join(BASE_DIR, "logs")
 # Clientes y su configuración individual
 CLIENTS = {
     "Chantilly": {
-        "urls": ["https://www.grupochantilly.com.mx"],
+        "urls": [os.getenv("CHANTILLY_URL")],
         "teams_webhook": os.getenv("TEAMS_WEBHOOK_CHANTILLY"), # <- From .env
         "log_dir": os.path.join(LOGS_BASE_DIR, "Chantilly"),
         "screenshot_dir": os.path.join(SCREENSHOTS_BASE_DIR, "Chantilly"),
     },
     "ICIntracom": {
-        "urls": ["https://www.icintracom.com.mx/nosotros"],
+        "urls": [os.getenv("ICINTRACOM_URL")],
         "log_dir": os.path.join(LOGS_BASE_DIR, "ICIntracom"),
         "teams_webhook": os.getenv("TEAMS_WEBHOOK_ICINTRACOM"), # <- From .env
         "screenshot_dir": os.path.join(SCREENSHOTS_BASE_DIR, "ICIntracom"),
@@ -31,4 +31,12 @@ SSL_ALERT_DAYS = 7
 
 # Telegram (From .env)
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+if not TELEGRAM_BOT_TOKEN:
+    raise ValueError("❌ Missing TELEGRAM_BOT_TOKEN in .env file!")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
+
+# Validar urls
+for client, conf in CLIENTS.items():
+    for url in conf["urls"]:
+        if not url:
+            raise ValueError(f"❌ Missing URL for client {client} in .env!")

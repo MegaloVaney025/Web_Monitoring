@@ -2,6 +2,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 import os
 from datetime import datetime
+from logger_module import logger
 
 def take_screenshot(client_name: str, screenshot_dir: str, url: str):
     """
@@ -19,7 +20,7 @@ def take_screenshot(client_name: str, screenshot_dir: str, url: str):
         driver.set_page_load_timeout(15)
         driver.get(url)
     except Exception as e:
-        print(f"⚠️ Error al cargar la página para screenshot: {e}")
+        logger.warning(f"⚠️ Error al cargar la página para screenshot: {e}")
 
     # Asegura carpeta
     os.makedirs(screenshot_dir, exist_ok=True)
@@ -32,7 +33,7 @@ def take_screenshot(client_name: str, screenshot_dir: str, url: str):
 
     # Guarda screenshot
     driver.save_screenshot(file_path)
-    print(f"📸 Screenshot guardado: {file_path}")
+    logger.info(f"📸 Screenshot guardado: {file_path}")
 
     driver.quit()
     return file_path

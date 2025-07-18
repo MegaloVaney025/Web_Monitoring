@@ -1,6 +1,7 @@
 import os
 from screenshot_module import take_screenshot
 from telegram_module import send_telegram_photo
+from logger_module import logger
 
 def enviar_y_borrar_screenshots(client_name: str, screenshot_dir: str, url: str):
     """
@@ -15,6 +16,6 @@ def enviar_y_borrar_screenshots(client_name: str, screenshot_dir: str, url: str)
         success = send_telegram_photo(full_path, caption)
         if success:
             os.remove(full_path)
-            print(f"🗑️ Archivo borrado: {filename}")
+            logger.info(f"🗑️ Archivo borrado: {filename}")
         else:
-            print(f"⚠️ No se borró {filename} porque no se envió correctamente")
+            logger.warning(f"⚠️ No se borró {filename} porque no se envió correctamente")

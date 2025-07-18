@@ -13,6 +13,6 @@ __pycache__/
 /screenshots/
 
 # Environments
-.env
+*.env
 .venv/
 venv/

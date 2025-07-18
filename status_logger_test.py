@@ -1,5 +1,5 @@
 from config import CLIENTS
-from logger_module import log_status
+from status_logger_module import log_status
 
 # Simula resultado de check_url_status
 data = {

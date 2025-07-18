@@ -2,8 +2,9 @@ import requests
 import ssl
 import socket
 from datetime import datetime
+from config import SSL_ALERT_DAYS
 
-def check_url_status(url: str, ssl_alert_days: int = 15) -> dict:
+def check_url_status(url: str, ssl_alert_days = SSL_ALERT_DAYS) -> dict:
     """
     Verifica el estado de la URL y el certificado SSL.
 
@@ -36,7 +37,7 @@ def check_url_status(url: str, ssl_alert_days: int = 15) -> dict:
 
     # Verificar SSL si es HTTPS
     if url.startswith("https://"):
-        hostname = url.split("//")[1].split("/")[0]
+        hostname = url.split("//")[1].split("/")[0].split(":")[0]  # Ignores port
         try:
             context = ssl.create_default_context()
             with socket.create_connection((hostname, 443), timeout=5) as sock:

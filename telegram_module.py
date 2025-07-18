@@ -1,5 +1,6 @@
 import requests
 from config import TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
+from logger_module import logger
 
 def send_telegram_message(message: str) -> bool:
     """
@@ -16,10 +17,10 @@ def send_telegram_message(message: str) -> bool:
     try:
         response = requests.post(url, data=payload, timeout=5)
         response.raise_for_status()
-        print("✅ Mensaje enviado a Telegram")
+        logger.info("✅ Mensaje enviado a Telegram")
         return True
     except requests.exceptions.RequestException as e:
-        print(f"❌ Error al enviar mensaje a Telegram: {e}")
+        logger.error(f"❌ Error al enviar mensaje a Telegram: {e}")
         return False
 
 def send_telegram_photo(photo_path: str, caption: str = "") -> bool:
@@ -37,8 +38,8 @@ def send_telegram_photo(photo_path: str, caption: str = "") -> bool:
             data = {"chat_id": TELEGRAM_CHAT_ID, "caption": caption}
             response = requests.post(url, data=data, files=files, timeout=10)
             response.raise_for_status()
-        print(f"✅ Foto enviada a Telegram: {photo_path}")
+        logger.info(f"✅ Foto enviada a Telegram: {photo_path}")
         return True
     except Exception as e:
-        print(f"❌ Error enviando foto a Telegram: {e}")
+        logger.error(f"❌ Error enviando foto a Telegram: {e}")
         return False

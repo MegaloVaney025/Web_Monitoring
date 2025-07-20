@@ -59,6 +59,7 @@ class DailySummary:
 
             message = self._generate_message()
             if send_telegram_message(message):  # Assume returns True on success
+                self.last_summary_date = datetime.datetime.now(self.timezone).date()  # <-- Update date here
                 self._reset_counters()
                 logger.info("✅ Daily summary sent successfully")
                 return True

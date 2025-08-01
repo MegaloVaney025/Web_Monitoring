@@ -74,7 +74,7 @@ def process_url(client, conf, url, ssl_alert_days):
                 logger.error(f"[ERROR] Failed to take screenshot for {client} - {url}: {e}")
 
             msgs = get_alert_messages(status)
-            send_teams_message(msgs["teams"], webhook)
+            #send_teams_message(msgs["teams"], webhook)
             send_telegram_message(msgs["telegram"])
             logger.info(f"🔴 ALERTA ACTIVADA para {client} - {url}")
 
